@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: #0D0D12;
+    color: #F0F0F5;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    overflow: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 107, 43, 0.4);
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-track {
+    background: rgba(255, 255, 255, 0.1);
+    height: 4px;
+    border-radius: 2px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #FF6B2B;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    margin-top: -6px;
+    box-shadow: 0 0 8px rgba(255, 107, 43, 0.5);
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .card {
+    @apply bg-bg-card rounded-2xl border border-border-subtle;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  .input-field {
+    @apply w-full bg-bg-secondary border border-border-default rounded-xl px-3 py-2.5
+           text-text-primary text-sm placeholder-text-muted
+           focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary/30
+           transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-accent-primary hover:bg-accent-secondary text-white font-medium
+           rounded-xl px-4 py-2.5 text-sm transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-accent-primary/50
+           active:scale-95;
+    box-shadow: 0 0 20px rgba(255, 107, 43, 0.3);
+  }
+
+  .btn-secondary {
+    @apply bg-bg-card hover:bg-bg-hover text-text-secondary hover:text-text-primary
+           border border-border-default rounded-xl px-4 py-2.5 text-sm
+           transition-all duration-200 focus:outline-none active:scale-95;
+  }
+
+  .section-label {
+    @apply text-xs font-medium text-text-muted uppercase tracking-widest mb-3;
+  }
+}
