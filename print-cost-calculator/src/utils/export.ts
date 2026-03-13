@@ -2,6 +2,31 @@ import jsPDF from 'jspdf';
 import { CalculationResult } from '../types/calculation';
 import { formatCurrency } from './calculator';
 
+// Cache loaded font base64 strings
+const fontCache: Record<string, string> = {};
+
+async function loadFontBase64(path: string): Promise<string> {
+  if (fontCache[path]) return fontCache[path];
+  const res = await fetch(path);
+  const buf = await res.arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+  fontCache[path] = btoa(binary);
+  return fontCache[path];
+}
+
+async function addCyrillicFonts(doc: jsPDF): Promise<void> {
+  const [regular, bold] = await Promise.all([
+    loadFontBase64('/fonts/DejaVuSans.ttf'),
+    loadFontBase64('/fonts/DejaVuSans-Bold.ttf'),
+  ]);
+  doc.addFileToVFS('DejaVuSans.ttf', regular);
+  doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+  doc.addFileToVFS('DejaVuSans-Bold.ttf', bold);
+  doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold');
+}
+
 export function exportToCSV(results: CalculationResult[]): void {
   const headers = [
     'Название', 'Дата',
@@ -59,10 +84,14 @@ export function exportToCSV(results: CalculationResult[]): void {
   URL.revokeObjectURL(url);
 }
 
-export function exportSingleToPDF(result: CalculationResult): void {
+export async function exportSingleToPDF(result: CalculationResult): Promise<void> {
   try {
   const { input, breakdown } = result;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  await addCyrillicFonts(doc);
+  const F = 'DejaVuSans';
+
   const created = new Date(result.createdAt);
   const date = isNaN(created.getTime()) ? 'н/д' : created.toLocaleDateString('ru-RU');
   const truncate = (s: string, max: number) => s.length > max ? s.slice(0, max - 1) + '…' : s;
@@ -79,12 +108,12 @@ export function exportSingleToPDF(result: CalculationResult): void {
   doc.setFillColor(...orange);
   doc.rect(0, 0, W, 28, 'F');
 
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(F, 'bold');
   doc.setFontSize(16);
   doc.setTextColor(255, 255, 255);
   doc.text(truncate(result.name || '3D-печать', 60), PAD, 13);
 
-  doc.setFont('helvetica', 'normal');
+  doc.setFont(F, 'normal');
   doc.setFontSize(9);
   doc.setTextColor(255, 220, 200);
   doc.text(`Расчёт себестоимости  •  ${date}`, PAD, 21);
@@ -93,7 +122,7 @@ export function exportSingleToPDF(result: CalculationResult): void {
 
   // ── Секция-хелпер ──────────────────────────────────────────────
   const section = (title: string) => {
-    doc.setFont('helvetica', 'bold');
+    doc.setFont(F, 'bold');
     doc.setFontSize(8);
     doc.setTextColor(...gray);
     doc.text(title.toUpperCase(), PAD, y);
@@ -105,11 +134,11 @@ export function exportSingleToPDF(result: CalculationResult): void {
   };
 
   const row = (label: string, value: string, highlight = false) => {
-    doc.setFont('helvetica', 'normal');
+    doc.setFont(F, 'normal');
     doc.setFontSize(10);
     doc.setTextColor(...(highlight ? orange : dark));
     doc.text(label, PAD, y);
-    doc.setFont('helvetica', highlight ? 'bold' : 'normal');
+    doc.setFont(F, highlight ? 'bold' : 'normal');
     doc.setTextColor(...(highlight ? orange : dark));
     doc.text(value, W - PAD, y, { align: 'right' });
     y += 7;
@@ -142,13 +171,13 @@ export function exportSingleToPDF(result: CalculationResult): void {
   doc.roundedRect(PAD, y, W - PAD * 2, 48, 3, 3, 'FD');
   y += 8;
 
-  doc.setFont('helvetica', 'normal');
+  doc.setFont(F, 'normal');
   doc.setFontSize(9);
   doc.setTextColor(...gray);
   doc.text('Цена продажи (1 шт.)', PAD + 6, y);
   y += 6;
 
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(F, 'bold');
   doc.setFontSize(22);
   doc.setTextColor(...orange);
   doc.text(formatCurrency(breakdown.sellingPricePerUnit), PAD + 6, y);
@@ -164,7 +193,7 @@ export function exportSingleToPDF(result: CalculationResult): void {
   doc.text('Прибыль / шт.', col2x, y);
   y += 5;
 
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(F, 'bold');
   doc.setFontSize(11);
   doc.setTextColor(...dark);
   doc.text(formatCurrency(breakdown.totalCostPerUnit), col1x, y);
@@ -173,13 +202,13 @@ export function exportSingleToPDF(result: CalculationResult): void {
 
   if (input.pricing.quantity > 1) {
     y += 7;
-    doc.setFont('helvetica', 'normal');
+    doc.setFont(F, 'normal');
     doc.setFontSize(9);
     doc.setTextColor(...gray);
     doc.text(`Выручка (${input.pricing.quantity} шт.)`, col1x, y);
     doc.text('Прибыль суммарно', col2x, y);
     y += 5;
-    doc.setFont('helvetica', 'bold');
+    doc.setFont(F, 'bold');
     doc.setFontSize(11);
     doc.setTextColor(...dark);
     doc.text(formatCurrency(breakdown.totalRevenue), col1x, y);
@@ -188,7 +217,7 @@ export function exportSingleToPDF(result: CalculationResult): void {
   }
 
   // ── Подвал ─────────────────────────────────────────────────────
-  doc.setFont('helvetica', 'normal');
+  doc.setFont(F, 'normal');
   doc.setFontSize(8);
   doc.setTextColor(180, 180, 200);
   doc.text('3D Print Cost Calculator', PAD, 287);

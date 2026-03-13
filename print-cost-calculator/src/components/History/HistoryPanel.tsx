@@ -69,7 +69,7 @@ export function HistoryPanel({ history, onLoad, onDelete, onClear }: Props) {
                 <button onClick={(e) => { e.stopPropagation(); onLoad(result); }} className="flex items-center gap-1 text-xs text-text-secondary hover:text-accent-primary transition-colors">
                   <ExternalLink size={11} /> {t.history.load}
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); exportSingleToPDF(result); }} className="flex items-center gap-1 text-xs text-text-secondary hover:text-accent-primary transition-colors">
+                <button onClick={(e) => { e.stopPropagation(); exportSingleToPDF(result).catch(console.error); }} className="flex items-center gap-1 text-xs text-text-secondary hover:text-accent-primary transition-colors">
                   <Download size={11} /> PDF
                 </button>
                 <button onClick={(e) => { e.stopPropagation(); onDelete(result.id); }} className="flex items-center gap-1 text-xs text-text-secondary hover:text-error transition-colors ml-auto">

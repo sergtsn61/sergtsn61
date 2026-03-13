@@ -37,7 +37,7 @@ function App() {
 
   const handleExportPDF = () => {
     const result = createCalculationResult(input);
-    exportSingleToPDF(result);
+    exportSingleToPDF(result).catch(console.error);
   };
 
   const handleLoadFromHistory = (result: typeof history[0]) => {
