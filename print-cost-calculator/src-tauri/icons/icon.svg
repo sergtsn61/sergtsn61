@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="110" fill="#1a1a2e"/>
+
+  <!-- Printer body -->
+  <rect x="96" y="220" width="320" height="160" rx="18" fill="#16213e"/>
+  <rect x="96" y="220" width="320" height="60" rx="18" fill="#0f3460"/>
+
+  <!-- Print bed / platform -->
+  <rect x="130" y="340" width="252" height="14" rx="7" fill="#e94560" opacity="0.9"/>
+
+  <!-- Printing object (layers) -->
+  <rect x="200" y="290" width="112" height="10" rx="5" fill="#ff6b2b" opacity="0.95"/>
+  <rect x="207" y="278" width="98" height="10" rx="5" fill="#ff6b2b" opacity="0.85"/>
+  <rect x="215" y="266" width="82" height="10" rx="5" fill="#ff6b2b" opacity="0.75"/>
+
+  <!-- Print head / extruder arm -->
+  <rect x="108" y="238" width="296" height="14" rx="7" fill="#e2e2e2"/>
+  <!-- Extruder carriage -->
+  <rect x="228" y="230" width="56" height="32" rx="8" fill="#ff6b2b"/>
+  <!-- Nozzle -->
+  <polygon points="248,262 264,262 258,280 254,280" fill="#ff8c42"/>
+
+  <!-- Filament spool (right side) -->
+  <circle cx="400" cy="160" r="52" fill="#0f3460" stroke="#ff6b2b" stroke-width="8"/>
+  <circle cx="400" cy="160" r="22" fill="#1a1a2e"/>
+  <circle cx="400" cy="160" r="8" fill="#ff6b2b"/>
+
+  <!-- Frame top bar -->
+  <rect x="96" y="130" width="20" height="100" rx="10" fill="#16213e"/>
+  <rect x="396" y="130" width="20" height="100" rx="10" fill="#16213e"/>
+  <rect x="96" y="130" width="320" height="20" rx="10" fill="#16213e"/>
+
+  <!-- Cost symbol -->
+  <text x="145" y="310" font-family="Arial,sans-serif" font-weight="bold" font-size="52" fill="#ff6b2b" opacity="0.9">₽</text>
+</svg>
