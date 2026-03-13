@@ -1,4 +1,4 @@
-import { CalculationResult, CalculationInput } from '../types/calculation';
+import { CalculationResult, CalculationInput, FilamentProfile, PrinterProfile } from '../types/calculation';
 
 const STORAGE_KEY = 'print_cost_history';
 const DRAFT_KEY = 'print_cost_draft';
@@ -40,4 +40,48 @@ export function loadDraft(): CalculationInput | null {
   } catch {
     return null;
   }
+}
+
+// ── Профили филаментов ───────────────────────────────────────────
+
+const FILAMENTS_KEY = 'print_cost_filaments';
+
+export function loadFilamentProfiles(): FilamentProfile[] {
+  try {
+    const raw = localStorage.getItem(FILAMENTS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+export function saveFilamentProfile(profile: FilamentProfile): void {
+  const list = loadFilamentProfiles().filter(p => p.id !== profile.id);
+  list.unshift(profile);
+  localStorage.setItem(FILAMENTS_KEY, JSON.stringify(list));
+}
+
+export function deleteFilamentProfile(id: string): void {
+  const list = loadFilamentProfiles().filter(p => p.id !== id);
+  localStorage.setItem(FILAMENTS_KEY, JSON.stringify(list));
+}
+
+// ── Профили принтеров ────────────────────────────────────────────
+
+const PRINTERS_KEY = 'print_cost_printers';
+
+export function loadPrinterProfiles(): PrinterProfile[] {
+  try {
+    const raw = localStorage.getItem(PRINTERS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+export function savePrinterProfile(profile: PrinterProfile): void {
+  const list = loadPrinterProfiles().filter(p => p.id !== profile.id);
+  list.unshift(profile);
+  localStorage.setItem(PRINTERS_KEY, JSON.stringify(list));
+}
+
+export function deletePrinterProfile(id: string): void {
+  const list = loadPrinterProfiles().filter(p => p.id !== id);
+  localStorage.setItem(PRINTERS_KEY, JSON.stringify(list));
 }

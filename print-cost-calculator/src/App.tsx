@@ -80,6 +80,7 @@ function App() {
                 <PrinterSection
                   data={input.printer}
                   onChange={updatePrinter}
+                  onChangePower={v => updateElectricity('powerConsumption', v)}
                 />
                 <PostProcessingSection
                   data={input.postProcessing}

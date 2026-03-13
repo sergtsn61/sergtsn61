@@ -68,3 +68,26 @@ export interface AppSettings {
   currency: Currency;
   language: 'ru' | 'en';
 }
+
+// ── Профили ─────────────────────────────────────────────────────
+
+export interface FilamentProfile {
+  id: string;
+  name: string;         // напр. "PLA+ Bambu White"
+  material: string;     // PLA, ABS, PETG, TPU, ASA...
+  color: string;        // цвет для метки
+  spoolWeight: number;
+  spoolPrice: number;
+  createdAt: string;
+}
+
+export interface PrinterProfile {
+  id: string;
+  name: string;         // напр. "Bambu Lab X1C"
+  printerCost: number;
+  printerLifespan: number;
+  maintenanceCost: number;
+  maintenanceHoursPerYear: number;
+  powerConsumption: number; // Вт — у каждого принтера своё
+  createdAt: string;
+}
