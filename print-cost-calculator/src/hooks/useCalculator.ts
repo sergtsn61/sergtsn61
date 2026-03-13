@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { CalculationInput, CostBreakdown } from '../types/calculation';
 import { calculateCosts, createCalculationResult } from '../utils/calculator';
 import { saveCalculation, saveDraft, loadDraft } from '../utils/storage';
@@ -35,24 +35,30 @@ const DEFAULT_INPUT: CalculationInput = {
   },
 };
 
+function getInitialInput(): CalculationInput {
+  return loadDraft() ?? DEFAULT_INPUT;
+}
+
 export function useCalculator() {
-  const [input, setInput] = useState<CalculationInput>(() => {
+  const [input, setInput] = useState<CalculationInput>(getInitialInput);
+
+  const [breakdown, setBreakdown] = useState<CostBreakdown>(() => {
     const draft = loadDraft();
-    return draft ?? DEFAULT_INPUT;
+    return calculateCosts(draft ?? DEFAULT_INPUT);
   });
 
-  const [breakdown, setBreakdown] = useState<CostBreakdown>(() =>
-    calculateCosts(DEFAULT_INPUT)
-  );
-
   const [savedId, setSavedId] = useState<string | null>(null);
+  const draftTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // Пересчёт при изменении параметров
+  // Пересчёт при изменении параметров + debounce сохранения черновика
   useEffect(() => {
-    const result = calculateCosts(input);
-    setBreakdown(result);
-    saveDraft(input);
+    setBreakdown(calculateCosts(input));
     setSavedId(null);
+
+    clearTimeout(draftTimerRef.current);
+    draftTimerRef.current = setTimeout(() => saveDraft(input), 500);
+
+    return () => clearTimeout(draftTimerRef.current);
   }, [input]);
 
   const updateFilament = useCallback(<K extends keyof CalculationInput['filament']>(

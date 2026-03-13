@@ -4,8 +4,8 @@ export function calculateCosts(input: CalculationInput): CostBreakdown {
   const { filament, printer, electricity, postProcessing, pricing } = input;
 
   // Стоимость филамента с учётом брака
-  const effectiveWeight = filament.usedWeight * (1 + filament.wasteFactor / 100);
-  const pricePerGram = filament.spoolPrice / filament.spoolWeight;
+  const effectiveWeight = filament.usedWeight * (1 + Math.max(0, filament.wasteFactor) / 100);
+  const pricePerGram = filament.spoolWeight > 0 ? filament.spoolPrice / filament.spoolWeight : 0;
   const filamentCost = pricePerGram * effectiveWeight;
 
   // Амортизация принтера
@@ -39,8 +39,9 @@ export function calculateCosts(input: CalculationInput): CostBreakdown {
   const profitPerUnit = totalCostPerUnit * (pricing.profitMargin / 100);
   const sellingPricePerUnit = totalCostPerUnit + profitPerUnit;
 
-  const totalRevenue = sellingPricePerUnit * pricing.quantity;
-  const totalProfit = profitPerUnit * pricing.quantity;
+  const qty = Math.max(1, pricing.quantity);
+  const totalRevenue = sellingPricePerUnit * qty;
+  const totalProfit = profitPerUnit * qty;
 
   return {
     filamentCost,

@@ -3,12 +3,18 @@ import { CalculationResult, CalculationInput, FilamentProfile, PrinterProfile } 
 const STORAGE_KEY = 'print_cost_history';
 const DRAFT_KEY = 'print_cost_draft';
 
+function safeWrite(key: string, data: unknown): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    console.error(`localStorage write failed for "${key}":`, e);
+  }
+}
+
 export function saveCalculation(result: CalculationResult): void {
   const history = loadHistory();
   history.unshift(result);
-  // Храним не более 100 записей
-  const trimmed = history.slice(0, 100);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+  safeWrite(STORAGE_KEY, history.slice(0, 100));
 }
 
 export function loadHistory(): CalculationResult[] {
@@ -21,8 +27,7 @@ export function loadHistory(): CalculationResult[] {
 }
 
 export function deleteCalculation(id: string): void {
-  const history = loadHistory().filter(r => r.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+  safeWrite(STORAGE_KEY, loadHistory().filter(r => r.id !== id));
 }
 
 export function clearHistory(): void {
@@ -30,7 +35,7 @@ export function clearHistory(): void {
 }
 
 export function saveDraft(input: CalculationInput): void {
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(input));
+  safeWrite(DRAFT_KEY, input);
 }
 
 export function loadDraft(): CalculationInput | null {
@@ -56,12 +61,11 @@ export function loadFilamentProfiles(): FilamentProfile[] {
 export function saveFilamentProfile(profile: FilamentProfile): void {
   const list = loadFilamentProfiles().filter(p => p.id !== profile.id);
   list.unshift(profile);
-  localStorage.setItem(FILAMENTS_KEY, JSON.stringify(list));
+  safeWrite(FILAMENTS_KEY, list);
 }
 
 export function deleteFilamentProfile(id: string): void {
-  const list = loadFilamentProfiles().filter(p => p.id !== id);
-  localStorage.setItem(FILAMENTS_KEY, JSON.stringify(list));
+  safeWrite(FILAMENTS_KEY, loadFilamentProfiles().filter(p => p.id !== id));
 }
 
 // ── Профили принтеров ────────────────────────────────────────────
@@ -78,10 +82,9 @@ export function loadPrinterProfiles(): PrinterProfile[] {
 export function savePrinterProfile(profile: PrinterProfile): void {
   const list = loadPrinterProfiles().filter(p => p.id !== profile.id);
   list.unshift(profile);
-  localStorage.setItem(PRINTERS_KEY, JSON.stringify(list));
+  safeWrite(PRINTERS_KEY, list);
 }
 
 export function deletePrinterProfile(id: string): void {
-  const list = loadPrinterProfiles().filter(p => p.id !== id);
-  localStorage.setItem(PRINTERS_KEY, JSON.stringify(list));
+  safeWrite(PRINTERS_KEY, loadPrinterProfiles().filter(p => p.id !== id));
 }

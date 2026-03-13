@@ -37,8 +37,15 @@ export function exportToCSV(results: CalculationResult[]): void {
     ];
   });
 
+  const escapeCSV = (val: string | number): string => {
+    let s = String(val).replace(/"/g, '""');
+    // Защита от formula injection в Excel
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    return `"${s}"`;
+  };
+
   const csv = [headers, ...rows]
-    .map(row => row.map(cell => `"${cell}"`).join(','))
+    .map(row => row.map(escapeCSV).join(','))
     .join('\n');
 
   const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -53,9 +60,12 @@ export function exportToCSV(results: CalculationResult[]): void {
 }
 
 export function exportSingleToPDF(result: CalculationResult): void {
+  try {
   const { input, breakdown } = result;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const date = new Date(result.createdAt).toLocaleDateString('ru-RU');
+  const created = new Date(result.createdAt);
+  const date = isNaN(created.getTime()) ? 'н/д' : created.toLocaleDateString('ru-RU');
+  const truncate = (s: string, max: number) => s.length > max ? s.slice(0, max - 1) + '…' : s;
 
   const orange: [number, number, number] = [255, 107, 43];
   const dark:   [number, number, number] = [26, 26, 46];
@@ -72,7 +82,7 @@ export function exportSingleToPDF(result: CalculationResult): void {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);
   doc.setTextColor(255, 255, 255);
-  doc.text(result.name || '3D-печать', PAD, 13);
+  doc.text(truncate(result.name || '3D-печать', 60), PAD, 13);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
@@ -185,6 +195,10 @@ export function exportSingleToPDF(result: CalculationResult): void {
   doc.text(new Date().toLocaleString('ru-RU'), W - PAD, 287, { align: 'right' });
 
   // ── Скачать ────────────────────────────────────────────────────
-  const filename = `${(result.name || '3d-print').replace(/[^a-zа-яёА-ЯЁ0-9_\- ]/gi, '')}_${date.replace(/\./g, '-')}.pdf`;
+  const filename = `${(result.name || '3d-print').replace(/[^a-zа-яёА-ЯЁ0-9_\- ]/gi, '').trim() || '3d-print'}_${date.replace(/\./g, '-')}.pdf`;
   doc.save(filename);
+  } catch (err) {
+    console.error('PDF export failed:', err);
+    alert('Не удалось создать PDF. Попробуйте ещё раз.');
+  }
 }
