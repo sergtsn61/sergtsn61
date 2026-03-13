@@ -9,9 +9,13 @@ interface NumberInputProps {
   max?: number;
   step?: number;
   hint?: string;
+  required?: boolean;
 }
 
-export function NumberInput({ label, value, onChange, unit, min = 0, max, step = 1, hint }: NumberInputProps) {
+export function NumberInput({ label, value, onChange, unit, min = 0, max, step = 1, hint, required }: NumberInputProps) {
+  const isInvalid = required && (isNaN(value) || value <= 0)
+    || (min !== undefined && value < min);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = parseFloat(e.target.value);
     if (!isNaN(v)) onChange(v);
@@ -31,7 +35,7 @@ export function NumberInput({ label, value, onChange, unit, min = 0, max, step =
           min={min}
           max={max}
           step={step}
-          className="input-field pr-12"
+          className={`input-field pr-12 ${isInvalid ? 'input-error' : ''}`}
         />
         {unit && (
           <span className="absolute right-3 text-xs text-text-muted font-medium pointer-events-none">
@@ -39,6 +43,11 @@ export function NumberInput({ label, value, onChange, unit, min = 0, max, step =
           </span>
         )}
       </div>
+      {isInvalid && (
+        <p className="text-xs text-error mt-0.5">
+          {min !== undefined && value < min ? `Min: ${min}` : '> 0'}
+        </p>
+      )}
     </div>
   );
 }

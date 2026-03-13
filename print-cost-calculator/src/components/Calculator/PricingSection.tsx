@@ -4,6 +4,7 @@ import { CalculationInput } from '../../types/calculation';
 import { NumberInput } from '../UI/NumberInput';
 import { SliderInput } from '../UI/SliderInput';
 import { SectionCard } from '../UI/SectionCard';
+import { useI18n } from '../../i18n';
 
 interface Props {
   data: CalculationInput['pricing'];
@@ -11,45 +12,14 @@ interface Props {
 }
 
 export function PricingSection({ data, onChange }: Props) {
+  const { t } = useI18n();
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <SectionCard
-      title="Ценообразование"
-      icon={TrendingUp}
-      iconColor="text-green-400"
-      collapsed={collapsed}
-      onToggle={() => setCollapsed(!collapsed)}
-    >
-      <SliderInput
-        label="Наценка"
-        value={data.profitMargin}
-        onChange={v => onChange('profitMargin', v)}
-        min={0}
-        max={500}
-        step={5}
-        unit="%"
-      />
-
-      <SliderInput
-        label="Накладные расходы (аренда, упаковка)"
-        value={data.overhead}
-        onChange={v => onChange('overhead', v)}
-        min={0}
-        max={50}
-        step={1}
-        unit="%"
-      />
-
-      <NumberInput
-        label="Количество изделий"
-        value={data.quantity}
-        onChange={v => onChange('quantity', Math.max(1, Math.round(v)))}
-        unit="шт."
-        min={1}
-        step={1}
-        hint="для общей выручки"
-      />
+    <SectionCard title={t.pricing.title} icon={TrendingUp} iconColor="text-green-400" collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)}>
+      <SliderInput label={t.pricing.profitMargin} value={data.profitMargin} onChange={v => onChange('profitMargin', v)} min={0} max={500} step={5} unit="%" />
+      <SliderInput label={t.pricing.overhead} value={data.overhead} onChange={v => onChange('overhead', v)} min={0} max={50} step={1} unit="%" />
+      <NumberInput label={t.pricing.quantity} value={data.quantity} onChange={v => onChange('quantity', Math.max(1, Math.round(v)))} unit={t.units.pcs} min={1} step={1} hint={t.pricing.forRevenue} />
     </SectionCard>
   );
 }

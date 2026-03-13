@@ -3,6 +3,48 @@
 @tailwind utilities;
 
 @layer base {
+  /* ── Тёмная тема (по умолчанию) ─────────────── */
+  :root, .dark {
+    --bg-primary: #0D0D12;
+    --bg-secondary: #13131A;
+    --bg-card: #1A1A24;
+    --bg-hover: #1F1F2E;
+    --accent-muted: rgba(255, 107, 43, 0.1);
+    --border-subtle: rgba(255,255,255,0.05);
+    --border-default: rgba(255,255,255,0.1);
+    --text-primary: #F0F0F5;
+    --text-secondary: #8888A0;
+    --text-muted: #55556A;
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+    --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,107,43,0.2);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+    --range-track: rgba(255, 255, 255, 0.1);
+    --white-alpha-2: rgba(255,255,255,0.02);
+    --white-alpha-4: rgba(255,255,255,0.04);
+    --white-alpha-5: rgba(255,255,255,0.05);
+  }
+
+  /* ── Светлая тема ────────────────────────────── */
+  .light {
+    --bg-primary: #F5F5F8;
+    --bg-secondary: #EEEEF2;
+    --bg-card: #FFFFFF;
+    --bg-hover: #F0F0F4;
+    --accent-muted: rgba(255, 107, 43, 0.08);
+    --border-subtle: rgba(0,0,0,0.06);
+    --border-default: rgba(0,0,0,0.12);
+    --text-primary: #1A1A2E;
+    --text-secondary: #5A5A78;
+    --text-muted: #9090A8;
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+    --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,107,43,0.15);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+    --range-track: rgba(0, 0, 0, 0.1);
+    --white-alpha-2: rgba(0,0,0,0.02);
+    --white-alpha-4: rgba(0,0,0,0.04);
+    --white-alpha-5: rgba(0,0,0,0.03);
+  }
+
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -16,10 +58,11 @@
   }
 
   body {
-    background-color: #0D0D12;
-    color: #F0F0F5;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
     overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
   }
 
   ::-webkit-scrollbar {
@@ -31,7 +74,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--scrollbar-thumb);
     border-radius: 2px;
   }
 
@@ -53,7 +96,7 @@
   }
 
   input[type="range"]::-webkit-slider-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--range-track);
     height: 4px;
     border-radius: 2px;
   }
@@ -72,14 +115,15 @@
 
 @layer components {
   .glass {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--white-alpha-2);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--border-subtle);
   }
 
   .card {
     @apply bg-bg-card rounded-2xl border border-border-subtle;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s, background-color 0.3s, border-color 0.3s;
   }
 
   .input-field {
@@ -87,6 +131,10 @@
            text-text-primary text-sm placeholder-text-muted
            focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary/30
            transition-all duration-200;
+  }
+
+  .input-error {
+    @apply border-error focus:border-error focus:ring-error/30;
   }
 
   .btn-primary {

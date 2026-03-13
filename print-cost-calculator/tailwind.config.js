@@ -4,29 +4,30 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         bg: {
-          primary: '#0D0D12',
-          secondary: '#13131A',
-          card: '#1A1A24',
-          hover: '#1F1F2E',
+          primary: 'var(--bg-primary)',
+          secondary: 'var(--bg-secondary)',
+          card: 'var(--bg-card)',
+          hover: 'var(--bg-hover)',
         },
         accent: {
           primary: '#FF6B2B',
           secondary: '#FF8F5A',
-          muted: '#FF6B2B1A',
+          muted: 'var(--accent-muted)',
         },
         border: {
-          subtle: '#ffffff0D',
-          default: '#ffffff1A',
+          subtle: 'var(--border-subtle)',
+          default: 'var(--border-default)',
           focus: '#FF6B2B66',
         },
         text: {
-          primary: '#F0F0F5',
-          secondary: '#8888A0',
-          muted: '#55556A',
+          primary: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)',
         },
         success: '#22C55E',
         warning: '#F59E0B',
@@ -42,8 +43,8 @@ export default {
         '3xl': '20px',
       },
       boxShadow: {
-        card: '0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05)',
-        'card-hover': '0 4px 12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,107,43,0.2)',
+        card: 'var(--shadow-card)',
+        'card-hover': 'var(--shadow-card-hover)',
         accent: '0 0 20px rgba(255,107,43,0.3)',
         glow: '0 0 40px rgba(255,107,43,0.15)',
       },
